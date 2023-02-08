@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var moduleName = "iis"
+const moduleName = "iis"
 
 type Module struct {
 

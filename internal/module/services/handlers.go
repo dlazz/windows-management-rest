@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var moduleName = "services"
+const moduleName = "services"
 
 type Module struct {
 }

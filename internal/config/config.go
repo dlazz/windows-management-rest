@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	WMR_MODULES        = "WMR_MODULES"
-	WMR_TOKEN          = "WMR_TOKEN"
-	WMR_WEBSERVER_PORT = "WMR_WEBSERVER_PORT"
+	WMR_MODULES         = "WMR_MODULES"
+	WMR_TOKEN           = "WMR_TOKEN"
+	WMR_WEBSERVER_PORT  = "WMR_WEBSERVER_PORT"
+	WMR_WEBSERVER_DEBUG = "WMR_WEBSERVER_DEBUG"
 )
 
 var Manager *Configuration
@@ -29,18 +30,18 @@ type Configuration struct {
 func (c *Configuration) validate() {
 	c.Webserver.validate()
 	if c.Token == "" && os.Getenv(WMR_TOKEN) == "" {
-		log.Error().Str("configration", "token").Msg("a valid authentication token must be set")
+		log.Error().Str("configuration", "token").Msg("a valid authentication token must be set")
 		os.Exit(1)
 	}
 	if c.Token == "" {
 		c.Token = os.Getenv(WMR_TOKEN)
 	}
 	if err := c.HashToken(); err != nil {
-		log.Error().Str("configration", "token").Msg("invalid token configuration")
+		log.Error().Str("configuration", "token").Msg("invalid token configuration")
 		os.Exit(1)
 	}
 	if c.Modules == nil && os.Getenv(WMR_MODULES) == "" {
-		log.Error().Str("configration", "modules").Msg("at least a valid module must be set")
+		log.Error().Str("configuration", "modules").Msg("at least a valid module must be set")
 		os.Exit(1)
 	}
 	if c.Modules == nil {
@@ -62,12 +63,21 @@ func (w *Webserver) validate() {
 		w.Port = os.Getenv(WMR_WEBSERVER_PORT)
 	}
 	if _, err := strconv.Atoi(w.Port); err != nil {
-		log.Error().Str("configration", "webserver").Msg(w.Port + " is not a valid webserver port")
+		log.Error().Str("configuration", "webserver").Msg(w.Port + " is not a valid webserver port")
 		os.Exit(1)
+	}
+	dbg := os.Getenv(WMR_WEBSERVER_DEBUG)
+	if dbg != "" {
+		debug, err := strconv.ParseBool(dbg)
+		if err != nil {
+			log.Error().Err(err).Str("configuration", "webserver").Msg(dbg + " is not a valid webserver port")
+		} else {
+			w.Debug = debug
+		}
 	}
 }
 
-func LoadJson(r io.Reader) *Configuration {
+func loadJson(r io.Reader) *Configuration {
 	c := &Configuration{}
 	if err := json.NewDecoder(r).Decode(c); err != nil {
 		log.Error().Err(err).Msg("unable to read decode json")
@@ -96,6 +106,6 @@ func (c *Configuration) HashToken() error {
 }
 
 func InitConfig(r io.Reader) {
-	Manager = LoadJson(r)
+	Manager = loadJson(r)
 	Manager.validate()
 }

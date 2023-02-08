@@ -5,8 +5,8 @@ import (
 )
 
 var Config = &service.Config{
-	Name:        "Wmra",
-	DisplayName: "Windows Management Rest Api",
+	Name:        "Wmr",
+	DisplayName: "Windows Management Rest",
 	Description: "Rest API for managing windows",
 }
 
