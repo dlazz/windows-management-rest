@@ -13,7 +13,7 @@ import (
 func authMiddleware(ctx *gin.Context) {
 	head := ctx.GetHeader("Authorization")
 	key := strings.Replace(head, "Bearer ", "", -1)
-	if !CheckTokenHash(key) {
+	if !checkTokenHash(key) {
 		log.Error().Str("auth", "verify key").Msg("authorization token not valid")
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		ctx.Abort()
@@ -27,12 +27,14 @@ func loggerMiddleware(ctx *gin.Context) {
 	log.Info().Str("handler", ctx.HandlerName()).
 		Str("client_ip", ctx.ClientIP()).
 		Str("method", ctx.Request.Method).
+		Str("path", ctx.Request.URL.Path).
+		Int("status", ctx.Writer.Status()).
 		Msg("")
 
 	ctx.Next()
 }
 
-func CheckTokenHash(key string) bool {
+func checkTokenHash(key string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(config.Manager.Token), []byte(key))
 	return err == nil
 }

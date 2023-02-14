@@ -19,12 +19,11 @@ func Run() error {
 	router := gin.New()
 	router.Use(loggerMiddleware)
 	router.GET("/version", getVersion)
-	router.GET("/configuration", getConfiuration)
+	router.GET("/configuration", getConfiguration(router))
 	router.GET("/healthcheck", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"ok": true}) })
-	router.GET("/modules", getModules)
-	router.GET("/handlers", getHandlers(router))
-	router.Use(authMiddleware)
-	loadModule(router)
+	api := router.Group("/api")
+	api.Use(authMiddleware)
+	loadModule(api)
 
 	if err := router.Run(":" + config.Manager.Webserver.Port); err != nil {
 		return err
@@ -33,13 +32,12 @@ func Run() error {
 
 }
 
-func loadModule(router *gin.Engine) {
+func loadModule(router *gin.RouterGroup) {
 	if config.Manager.Modules != nil {
 		for _, mod := range config.Manager.Modules {
-			if _, ok := module.Store[mod]; ok {
-				log.Debug().Str("module", mod).Msg("loading module")
-				module.Store[mod].Handle(router)
-			}
+			log.Debug().Str("module", mod).Msg("loading...")
+			module.Store[mod].Handle(router)
+			log.Debug().Str("module", mod).Msg("loaded")
 		}
 	}
 }

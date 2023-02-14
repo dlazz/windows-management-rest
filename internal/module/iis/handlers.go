@@ -18,7 +18,7 @@ func NewModule() module.Module {
 	return &Module{}
 }
 
-func (m *Module) Handle(r *gin.Engine) {
+func (m *Module) Handle(r *gin.RouterGroup) {
 
 	iis := r.Group("/iis")
 	iis.Handle(m.getWebsite())

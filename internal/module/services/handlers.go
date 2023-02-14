@@ -16,7 +16,7 @@ func NewModule() module.Module {
 	return &Module{}
 }
 
-func (m *Module) Handle(r *gin.Engine) {
+func (m *Module) Handle(r *gin.RouterGroup) {
 	services := r.Group("/services")
 
 	services.Handle(m.get())

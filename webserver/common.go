@@ -26,33 +26,46 @@ func getVersion(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"version": Version.Get()})
 }
 
-func getModules(ctx *gin.Context) {
+func getModules() map[string][]string {
 	m := []string{}
 	for k := range module.Store {
 		m = append(m, k)
 	}
-	ctx.JSON(http.StatusOK, gin.H{"available": m, "loaded": config.Manager.Modules})
-}
-
-func getConfiuration(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, config.Manager)
-}
-
-func getHandlers(router *gin.Engine) gin.HandlerFunc {
-	type H struct {
-		Handler string `json:"handler"`
-		Method  string `json:"method"`
+	return map[string][]string{
+		"available": m,
+		"loaded":    config.Manager.Modules,
 	}
 
+}
+
+func getHandlers(router *gin.Engine) []map[string]string {
+
+	handlerList := []map[string]string{}
+	handlers := router.Routes()
+	for _, item := range handlers {
+		handlerList = append(handlerList, map[string]string{
+			"handler": item.Path,
+			"method":  item.Method,
+		})
+	}
+	return handlerList
+
+}
+
+func getConfiguration(router *gin.Engine) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		handlerList := []*H{}
-		handlers := router.Routes()
-		for _, item := range handlers {
-			handlerList = append(handlerList, &H{
-				Handler: item.Path,
-				Method:  item.Method,
-			})
+		type OverallConfig struct {
+			Version       string                `json:"version"`
+			Configuration *config.Configuration `json:"configuration"`
+			Modules       map[string][]string   `json:"modules"`
+			Handlers      []map[string]string   `json:"handlers"`
 		}
-		ctx.JSON(http.StatusOK, handlerList)
+		o := OverallConfig{
+			Configuration: config.Manager,
+			Modules:       getModules(),
+			Version:       Version.Get(),
+			Handlers:      getHandlers(router),
+		}
+		ctx.JSON(http.StatusOK, o)
 	}
 }
