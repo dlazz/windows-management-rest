@@ -8,6 +8,8 @@ import (
 	"github.com/dlazz/windows-management-rest/internal/srvc"
 	"github.com/dlazz/windows-management-rest/webserver"
 
+	_ "embed"
+
 	"github.com/kardianos/service"
 	"github.com/rs/zerolog/log"
 )

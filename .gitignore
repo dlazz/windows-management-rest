@@ -3,3 +3,4 @@ build
 .vscode
 config.json
 .DS_Store
+*.zip

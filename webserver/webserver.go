@@ -7,20 +7,26 @@ import (
 	"github.com/dlazz/windows-management-rest/internal/module"
 	_ "github.com/dlazz/windows-management-rest/internal/module/iis"
 	_ "github.com/dlazz/windows-management-rest/internal/module/services"
+	"github.com/dlazz/windows-management-rest/webserver/docs"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	// gin-swagger middleware
 )
 
+// @title Windows Management Rest
 func Run() error {
 	if !config.Manager.Webserver.Debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.New()
+	docs.SwaggerInfo.BasePath = "/"
 	router.Use(loggerMiddleware)
 	router.GET("/version", getVersion)
 	router.GET("/configuration", getConfiguration(router))
 	router.GET("/healthcheck", func(ctx *gin.Context) { ctx.JSON(http.StatusOK, gin.H{"ok": true}) })
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler, swaggerConfig))
 	api := router.Group("/api")
 	api.Use(authMiddleware)
 	loadModule(api)
@@ -40,4 +46,8 @@ func loadModule(router *gin.RouterGroup) {
 			log.Debug().Str("module", mod).Msg("loaded")
 		}
 	}
+}
+
+func swaggerConfig(config *ginSwagger.Config) {
+	config.Title = "Windows Management Rest"
 }

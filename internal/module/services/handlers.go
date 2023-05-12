@@ -26,6 +26,15 @@ func (m *Module) Handle(r *gin.RouterGroup) {
 	services.Handle(m.restart())
 }
 
+// @BasePath /api/services
+// GetServices godoc
+// @Summary get service list
+// @Schemes
+// @Description returns all available windows services
+// @Accept json
+// @Produce json
+// @Success 200 {json} message
+// @Router /api/services [get]
 func (m *Module) getAllServices() (httpMethod, relativePath string, handler gin.HandlerFunc) {
 	httpMethod = http.MethodGet
 	relativePath = "/"
@@ -40,6 +49,16 @@ func (m *Module) getAllServices() (httpMethod, relativePath string, handler gin.
 	}
 }
 
+// @BasePath /api/services/:name
+// GetService godoc
+// @Summary get
+// @Schemes
+// @Description returns a windows service from a given name
+// @Produce json
+// @Param name path string true "service name"
+// @Param			Authorization	header		string	true	"Authentication header"
+// @Success 200 {json} message
+// @Router /api/services/{name} [get]
 func (m *Module) get() (httpMethod, relativePath string, handler gin.HandlerFunc) {
 	httpMethod = http.MethodGet
 	relativePath = "/:name"
@@ -55,6 +74,16 @@ func (m *Module) get() (httpMethod, relativePath string, handler gin.HandlerFunc
 	}
 }
 
+// @BasePath /
+// StopService godoc
+// @Summary post
+// @Schemes
+// @Description stop a windows service
+// @Produce json
+// @Param name path string true "service name"
+// @Param			Authorization	header		string	true	"Authentication header"
+// @Success 200 {json} message
+// @Router /api/services/{name}/stop [post]
 func (m *Module) stop() (httpMethod, relativePath string, handler gin.HandlerFunc) {
 	httpMethod = http.MethodPost
 	relativePath = "/:name/stop"
@@ -69,6 +98,16 @@ func (m *Module) stop() (httpMethod, relativePath string, handler gin.HandlerFun
 	}
 }
 
+// @BasePath /
+// StartService godoc
+// @Summary post
+// @Schemes
+// @Description start a windows service
+// @Produce json
+// @Param name path string true "service name"
+// @Param			Authorization	header		string	true	"Authentication header"
+// @Success 200 {json} message
+// @Router /api/services/{name}/start [post]
 func (m *Module) start() (httpMethod, relativePath string, handler gin.HandlerFunc) {
 	httpMethod = http.MethodPost
 	relativePath = "/:name/start"
@@ -83,6 +122,16 @@ func (m *Module) start() (httpMethod, relativePath string, handler gin.HandlerFu
 	}
 }
 
+// @BasePath /
+// RestartService godoc
+// @Summary post
+// @Schemes
+// @Description restart a windows service
+// @Produce json
+// @Param name path string true "service name"
+// @Param			Authorization	header		string	true	"Authentication header"
+// @Success 200 {json} message
+// @Router /api/services/{name}/restart [post]
 func (m *Module) restart() (httpMethod, relativePath string, handler gin.HandlerFunc) {
 	httpMethod = http.MethodPost
 	relativePath = "/:name/restart"
