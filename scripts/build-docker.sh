@@ -1,9 +1,15 @@
+VERSION=$1
 APP_NAME="wrm"
-SHA=$(git rev-parse HEAD)
-MAIN_VERSION="0.1"
-VERSION="${MAIN_VERSION}.${SHA:0:6}"
+if [ -z "$VERSION" ]
+then 
+    SHA=$(git rev-parse HEAD)
+    MAIN_VERSION="0.1"
+    VERSION="${MAIN_VERSION}.${SHA:0:6}"
+fi
+
 IMAGE_NAME="${APP_NAME}:${VERSION}"
 # Building and tagging image
+echo "Image Name: ${IMAGE_NAME}"
 
 docker build --rm \
              --build-arg VERSION=${VERSION} \
@@ -16,7 +22,7 @@ docker run --name ${APP_NAME} -dit ${IMAGE_NAME}
 echo "copy file from container"
 docker cp ${APP_NAME}:/go/build .
 echo "archiving file"
-zip ./"v.${APP_NAME}-${VERSION}.zip" -r ./build/*
+zip ./"${APP_NAME}-v.${VERSION}.zip" -r ./build/*
 
 echo "cleaning up"
 docker stop ${APP_NAME}
