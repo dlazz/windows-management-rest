@@ -1,5 +1,5 @@
 VERSION=$1
-APP_NAME="wrm"
+APP_NAME="wmr"
 if [ -z "$VERSION" ]
 then 
     SHA=$(git rev-parse HEAD)
