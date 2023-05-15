@@ -22,7 +22,8 @@ docker run --name ${APP_NAME} -dit ${IMAGE_NAME}
 echo "copy file from container"
 docker cp ${APP_NAME}:/go/build .
 echo "archiving file"
-zip ./"${APP_NAME}-v.${VERSION}.zip" -r ./build/*
+cd ./build
+zip ../"${APP_NAME}-v.${VERSION}.zip" -r .
 
 echo "cleaning up"
 docker stop ${APP_NAME}
