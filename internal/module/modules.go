@@ -2,6 +2,12 @@ package module
 
 import "github.com/gin-gonic/gin"
 
+var AvailableModules = []string{
+	"services",
+	"iis",
+	"reboot",
+}
+
 var Store = make(map[string]Module)
 
 type Module interface {
