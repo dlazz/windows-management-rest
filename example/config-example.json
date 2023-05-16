@@ -1,0 +1,10 @@
+{
+
+    "auth_token": "",
+    "webserver": {
+        "debug": true,
+        "port" : ""
+    },
+    "modules": [
+    ]
+}
