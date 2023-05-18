@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/dlazz/windows-management-rest/internal/config"
+	"github.com/dlazz/windows-management-rest/internal/logger"
 	"github.com/dlazz/windows-management-rest/internal/module"
 	_ "github.com/dlazz/windows-management-rest/internal/module/iis"
 	_ "github.com/dlazz/windows-management-rest/internal/module/reboot"
 	_ "github.com/dlazz/windows-management-rest/internal/module/services"
 	"github.com/dlazz/windows-management-rest/webserver/docs"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	// gin-swagger middleware
@@ -44,9 +44,9 @@ func loadModule(router *gin.RouterGroup) {
 		for _, mod := range config.Manager.Modules {
 			for _, existing := range module.AvailableModules {
 				if mod == existing {
-					log.Debug().Str("module", mod).Msg("loading...")
+					logger.Logger.Debug().Str("module", mod).Msg("loading...")
 					module.Store[mod].Handle(router)
-					log.Debug().Str("module", mod).Msg("loaded")
+					logger.Logger.Debug().Str("module", mod).Msg("loaded")
 				}
 			}
 		}

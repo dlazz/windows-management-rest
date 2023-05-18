@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/dlazz/windows-management-rest/internal/config"
+	"github.com/dlazz/windows-management-rest/internal/logger"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -14,7 +14,7 @@ func authMiddleware(ctx *gin.Context) {
 	head := ctx.GetHeader("Authorization")
 	key := strings.Replace(head, "Bearer ", "", -1)
 	if !checkTokenHash(key) {
-		log.Error().Str("auth", "verify key").Msg("authorization token not valid")
+		logger.Logger.Error().Str("auth", "verify key").Msg("authorization token not valid")
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		ctx.Abort()
 		return
@@ -24,7 +24,7 @@ func authMiddleware(ctx *gin.Context) {
 
 func loggerMiddleware(ctx *gin.Context) {
 
-	log.Info().Str("handler", ctx.HandlerName()).
+	logger.Logger.Info().Str("handler", ctx.HandlerName()).
 		Str("client_ip", ctx.ClientIP()).
 		Str("method", ctx.Request.Method).
 		Str("path", ctx.Request.URL.Path).
